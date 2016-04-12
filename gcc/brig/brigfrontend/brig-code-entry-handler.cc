@@ -2304,10 +2304,9 @@ brig_code_entry_handler::extend_int (tree input, tree dest_type, tree src_type)
   return convert_to_integer (dest_type, conversion_result);
 }
 
-/**
- * Returns the integer constant value of the given node.
- * If it's a cast, looks into the source of the cast.
- */
+/* Returns the integer constant value of the given node.
+   If it's a cast, looks into the source of the cast.  */
+
 HOST_WIDE_INT
 brig_code_entry_handler::int_constant_value (tree node)
 {

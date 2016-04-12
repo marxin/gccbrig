@@ -36,14 +36,11 @@
 #include "hsa-brig-format.h"
 #include "brig-function.h"
 
-/**
- * Converts an HSAIL BRIG input to GENERIC.
- *
- * This class holds global state for the translation process.  Handling
- * of the smaller pieces of BRIG data is delegated to various handler
- * classes declared in brig-code-entry-handlers.h.
- *
- */
+/* Converts an HSAIL BRIG input to GENERIC.
+
+   This class holds global state for the translation process.  Handling
+   of the smaller pieces of BRIG data is delegated to various handler
+   classes declared in brig-code-entry-handlers.h.  */
 
 struct reg_decl_index_entry;
 

@@ -203,7 +203,8 @@ brig_directive_variable_handler::operator () (const BrigBase *base)
 	   || brigVar->segment == BRIG_SEGMENT_READONLY)
     {
       bool is_definition = brigVar->modifier & BRIG_VARIABLE_DEFINITION;
-      tree def = is_definition ? NULL_TREE : m_parent.global_variable (var_name);
+      tree def
+	= is_definition ? NULL_TREE : m_parent.global_variable (var_name);
 
       if (!is_definition && def != NULL_TREE)
 	{

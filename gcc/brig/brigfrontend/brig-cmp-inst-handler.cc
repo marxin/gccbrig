@@ -70,9 +70,10 @@ brig_cmp_inst_handler::operator () (const BrigBase *base)
       expr = build2 (NE_EXPR, result_type, operands[1], operands[2]);
 
       if (!is_int_cmp)
-	expr = build2 (BIT_AND_EXPR, TREE_TYPE (expr), 
+	expr = build2 (BIT_AND_EXPR, TREE_TYPE (expr),
 		       expr,
-		       build2 (ORDERED_EXPR, result_type, operands[1], operands[2]));
+		       build2 (ORDERED_EXPR, result_type, operands[1],
+			       operands[2]));
       break;
     case BRIG_COMPARE_SLT:
     case BRIG_COMPARE_LT:
@@ -94,12 +95,13 @@ brig_cmp_inst_handler::operator () (const BrigBase *base)
     case BRIG_COMPARE_EQU:
       // For some reason gcc trunk (as of 2016-04-06) doesn't handle
       // NaNs correctly with UNEQ_EXPR (at least with x86_64), thus
-      // implement via two or'd expressions. This worked in gcc 4.9.1.
+      // implement via two or'd expressions.  This worked in gcc 4.9.1.
       expr = build2 (EQ_EXPR, result_type, operands[1], operands[2]);
 
-      expr = build2 (BIT_IOR_EXPR, TREE_TYPE (expr), 
+      expr = build2 (BIT_IOR_EXPR, TREE_TYPE (expr),
 		     expr,
-		     build2 (UNORDERED_EXPR, result_type, operands[1], operands[2]));
+		     build2 (UNORDERED_EXPR, result_type, operands[1],
+			     operands[2]));
       break;
     case BRIG_COMPARE_SNEU:
     case BRIG_COMPARE_NEU:
@@ -146,32 +148,32 @@ brig_cmp_inst_handler::operator () (const BrigBase *base)
       expr = convert_to_real (brig_to_generic::s_fp32_type, expr);
     }
   else if (VECTOR_TYPE_P (dest_type) && ANY_INTEGRAL_TYPE_P (dest_type)
-	   && !is_boolean_dest 
+	   && !is_boolean_dest
 	   && (inst->sourceType & 0x01F) != BRIG_TYPE_F16)
     {
       // In later gcc versions, the output of comparison is not
-      // all ones for vectors like still in 4.9.1. We need to use
+      // all ones for vectors like still in 4.9.1.  We need to use
       // an additional VEC_COND_EXPR to produce the all ones 'true' value
       // required by HSA.
       // VEC_COND_EXPR <a == b, { -1, -1, -1, -1 }, { 0, 0, 0, 0 }>;
-      
-      tree all_ones =
-	build_vector_from_val (dest_type,
-			       build_minus_one_cst (TREE_TYPE (dest_type)));
-      tree all_zeroes =
-	build_vector_from_val (dest_type,
-			       build_zero_cst (TREE_TYPE (dest_type)));
-	
+
+      tree all_ones
+	= build_vector_from_val (dest_type,
+				 build_minus_one_cst (TREE_TYPE (dest_type)));
+      tree all_zeroes
+	= build_vector_from_val (dest_type,
+				 build_zero_cst (TREE_TYPE (dest_type)));
+
       expr = build3 (VEC_COND_EXPR, dest_type, expr, all_ones, all_zeroes);
     }
   else if (INTEGRAL_TYPE_P (dest_type) && !is_boolean_dest)
     {
       // We need to produce the all-ones pattern for the width of the whole
-      // resulting integer type. Use back and forth shifts for propagating
+      // resulting integer type.  Use back and forth shifts for propagating
       // the lower 1.
       tree signed_type = signed_type_for (dest_type);
       tree signed_result = convert_to_integer (signed_type, expr);
-      
+
       size_t element_width = result_width;
 
       tree shift_amount_cst
@@ -179,7 +181,7 @@ brig_cmp_inst_handler::operator () (const BrigBase *base)
 
       tree shift_left_result
 	= build2 (LSHIFT_EXPR, signed_type, signed_result, shift_amount_cst);
-      
+
       expr = build2 (RSHIFT_EXPR, signed_type, shift_left_result,
 		     shift_amount_cst);
     }

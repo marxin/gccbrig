@@ -581,11 +581,10 @@ brig_function::append_statement (tree stmt)
   return stmt;
 }
 
-/**
- * Creates a new "alloca frame" for the current function by
- * injecting an alloca frame push in the beginning of the function
- * and an alloca frame pop before all function exit points.
- */
+/* Creates a new "alloca frame" for the current function by
+   injecting an alloca frame push in the beginning of the function
+   and an alloca frame pop before all function exit points.  */
+
 void
 brig_function::create_alloca_frame ()
 {
